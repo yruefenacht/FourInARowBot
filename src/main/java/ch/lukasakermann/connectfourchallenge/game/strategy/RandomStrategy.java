@@ -1,6 +1,7 @@
 package ch.lukasakermann.connectfourchallenge.game.strategy;
 
 import ch.lukasakermann.connectfourchallenge.connectFourService.Game;
+import ch.lukasakermann.connectfourchallenge.game.contest2019.ConnectFourStrategy;
 
 import java.util.List;
 import java.util.Random;

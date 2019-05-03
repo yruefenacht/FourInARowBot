@@ -1,4 +1,4 @@
-package ch.lukasakermann.connectfourchallenge.game.strategy;
+package ch.lukasakermann.connectfourchallenge.game.contest2019;
 
 import ch.lukasakermann.connectfourchallenge.connectFourService.Game;
 

@@ -3,7 +3,7 @@ package ch.lukasakermann.connectfourchallenge.game;
 import ch.lukasakermann.connectfourchallenge.connectFourService.ConnectFourAdapter;
 import ch.lukasakermann.connectfourchallenge.connectFourService.Game;
 import ch.lukasakermann.connectfourchallenge.connectFourService.GameId;
-import ch.lukasakermann.connectfourchallenge.game.strategy.ConnectFourStrategy;
+import ch.lukasakermann.connectfourchallenge.game.contest2019.ConnectFourStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
