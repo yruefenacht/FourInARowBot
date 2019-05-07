@@ -10,13 +10,14 @@ import java.util.concurrent.Executors;
 
 public class ConnectFourClientApplication {
 
+    private static final String TOURNAMENT_URL = "http://connect-four-challenge.herokuapp.com/";
     private static final String SERVER_URL = "http://localhost:8080/";
     private static final int NUMBER_OF_GAMES = 1_0;
 
     public static void main(String[] args) {
         ConnectFourAdapter connectFourAdapter = new ConnectFourAdapter(SERVER_URL);
         ExecutorService executor = Executors.newFixedThreadPool(2);
-        executor.submit(new GameRunner(connectFourAdapter, "RandomStrategy", new RandomStrategy(), NUMBER_OF_GAMES));
-        executor.submit(new GameRunner(connectFourAdapter, "FirstStrategy", new FirstStrategy(), NUMBER_OF_GAMES));
+        executor.submit(new GameRunner(connectFourAdapter, "FirstStrategy", new RandomStrategy(), NUMBER_OF_GAMES));
+        executor.submit(new GameRunner(connectFourAdapter, "FirstStrategy2", new FirstStrategy(), NUMBER_OF_GAMES));
     }
 }

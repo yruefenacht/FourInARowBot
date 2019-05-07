@@ -7,72 +7,59 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class FirstStrategy implements ConnectFourStrategy {
 
-    int a;
-    int b;
-    int getHeight(List<List<String>> board,int pos){
+    private int a;
+    private int b;
+
+
+    private int getHeight(List<List<String>> board, int pos){
 
         for(int i = 5;i>=0;i--){
-            if(board.get(i).get(pos).equals(ChipStates.EMPTY_CELL)){
+            if(board.get(i).get(pos).equals(ChipStates.EMPTY_CELL))
                 return i;
-            }
         }
         return -1;
     }
 
-    boolean canWinInOneMove(Game game, List<List<String>> board, int pos, String color){
 
-        int columnheight = getHeight(board,pos);
-        if(columnheight == -1){
+    private boolean canWinInOneMove(Game game, List<List<String>> board, int pos, String color){
+
+        int columnHeight = getHeight(board,pos);
+        if(columnHeight == -1)
             return false;
-        }
-        //überprüfen waagrecht
-        List<String> row = board.get(columnheight);
+
+        //check horizontal
+        List<String> row = board.get(columnHeight);
         int consecutive = 0;
         for(int i = 0; i < 7; i++){
             if(row.get(i).equals(color) || i == pos){
                 consecutive++;
-                if(consecutive >= 4){
-                    return true;
-                }
+                if(consecutive >= 4) return true;
             }
             else{
                 consecutive = 0;
             }
-
         }
-        //überprüfen senkrecht
-
-        if (columnheight < 3){
+        //Check vertical
+        if (columnHeight < 3){
             int consecutive2 = 0;
             for(int i = 5;i>=0;i--){
-
-
-                if (board.get(i).get(pos).equals(color)){
+                if (board.get(i).get(pos).equals(color))
                     consecutive2++;
-                }
-                else if(board.get(i).get(pos).equals(ChipStates.EMPTY_CELL) && consecutive2 == 3){
+                else if(board.get(i).get(pos).equals(ChipStates.EMPTY_CELL) && consecutive2 == 3)
                     return true;
-                }
-                else{
+                else
                     consecutive2 = 0;
-                }
-
             }
         }
 
-        //überprüfen diagonal
-
-
-        int diagonalCounter = 0;
-
+        //check diagonal
         int x = pos;
-        int y = columnheight;
+        int y = columnHeight;
 
         //go down left
         while(isInBounds(x-1, y+1, board)) {
@@ -84,45 +71,35 @@ public class FirstStrategy implements ConnectFourStrategy {
         int coinCounterConsecutive = 0;
         while(isInBounds(x, y, board)) {
 
-            if(getCoinColorAt(x, y, board).equals(color)) {
+            if(getCoinColorAt(x, y, board).equals(color))
                 coinCounterConsecutive++;
-
-            }
-            else if(x == pos){
+            else if(x == pos)
                 coinCounterConsecutive++;
-            }
-
-            else {
+            else
                 coinCounterConsecutive = 0;
-            }
-            if(coinCounterConsecutive >= 4){
-                return true;
-            }
+
+            if(coinCounterConsecutive >= 4) return true;
+
             x++;
             y--;
         }
-        // diagonal andere seite
+        // diagonal inverse
         x = pos;
-        y = columnheight;
+        y = columnHeight;
         while(isInBounds(x+1, y+1, board)) {
             x++;
             y++;
         }
         while(isInBounds(x, y, board)) {
 
-            if(getCoinColorAt(x, y, board).equals(color)) {
+            if(getCoinColorAt(x, y, board).equals(color))
                 coinCounterConsecutive++;
-
-            }
-            else if(x == pos){
+            else if(x == pos)
                 coinCounterConsecutive++;
-            }
-            else {
+            else
                 coinCounterConsecutive = 0;
-            }
-            if(coinCounterConsecutive >= 4){
-                return true;
-            }
+
+            if(coinCounterConsecutive >= 4) return true;
             x--;
             y--;
         }
@@ -141,83 +118,64 @@ public class FirstStrategy implements ConnectFourStrategy {
 
         return (x >= 0 && x < 7 && y >= 0 && y < 6);
     }
-    List<List<String>> copyBoard(List<List<String>> board){
-        List<List<String>> board2 = new ArrayList<List<String>>();
-        for(int i = 0;i<6;i++) {
-            board2.add(new ArrayList<>(board.get(i)));
-        }
-        return board2;
 
+
+    private List<List<String>> copyBoard(List<List<String>> board) {
+        List<List<String>> board2 = new ArrayList<List<String>>();
+        for(int i = 0;i<6;i++)
+            board2.add(new ArrayList<>(board.get(i)));
+        return board2;
     }
-    int costfunctionEasy(Game game, List<List<String>> board, int pos, String color){
-        if(canWinInOneMove(game, board,pos,color)){
-            int r = 0;
-            return 100000000;
-        }
-        String alternateColor;
-        if(color.equals("YELLOW")){
-            alternateColor = "RED";
-        }
-        else{
-            alternateColor = "YELLOW";
-        }
-        if(canWinInOneMove(game, board,pos,alternateColor)){
-            return 1000000;
-        }
+
+
+    private int costFunctionEasy(Game game, List<List<String>> board, int pos, String color) {
+
+        if(canWinInOneMove(game, board,pos,color)) return 100000000;
+
+        String alternateColor = color.equals("YELLOW") ? "RED" : "YELLOW";
+
+        if(canWinInOneMove(game, board, pos, alternateColor)) return 1000000;
 
         int result = 0;
         int height = getHeight(board,pos);
-        if(height != 5){
-            if(!board.get(height+1).get(pos).equals(color)){
+        if(height != 5)
+            if(!board.get(height+1).get(pos).equals(color))
                 result += b;
-            }
 
-        }
-        if(height != 5){
-            if(!board.get(height+1).get(pos).equals(alternateColor)){
+        if(height != 5)
+            if(!board.get(height+1).get(pos).equals(alternateColor))
                 result += 8;
-            }
 
-        }
-        if(pos > 0){
-            if(board.get(height).get(pos-1).equals(color)&&getHeight(board,pos-1)==getHeight(board,pos)){
+        if(pos > 0)
+            if(board.get(height).get(pos-1).equals(color) && getHeight(board, pos-1) == height)
                 result += a;
-            }
 
-        }
-        if(pos < 6){
-            if(board.get(height).get(pos+1).equals(color)&&getHeight(board,pos+1)==getHeight(board,pos)){
+        if(pos < 6)
+            if(board.get(height).get(pos+1).equals(color) && getHeight(board, pos+1) == height)
                 result += a;
-            }
-        }
-        if (getHeight(board,pos) < 4){
-            if(board.get(getHeight(board,pos)+1).get(pos).equals(color)&&board.get(getHeight(board,pos)+2).get(pos).equals(color)){
+
+        if (getHeight(board,pos) < 4)
+            if(board.get(height+1).get(pos).equals(color) && board.get(height+2).get(pos).equals(color))
                 result += 1000;
-            }
-        }
-        if (getHeight(board,pos) < 4){
-            if(board.get(getHeight(board,pos)+1).get(pos).equals(alternateColor)&&board.get(getHeight(board,pos)+2).get(pos).equals(alternateColor)){
+
+        if (getHeight(board,pos) < 4)
+            if(board.get(height+1).get(pos).equals(alternateColor) && board.get(height+2).get(pos).equals(alternateColor))
                 result += 50;
-            }
-        }
-        if(height < 2){
-            result -= 15;
-        }
-        int sdkj = (height*(pos-3)*4);
-        result = result - Math.abs(sdkj)+height*3;
+
+        if(height < 2) result -= 15;
+
+        int spat = (height*(pos-3)*4);
+        result -= Math.abs(spat)+height*3;
         List<List<String>> board2 = copyBoard(board);
-        board2.get(height).set(pos,color);
-        for(int i = 0;i<7;i++){
-            if(canWinInOneMove(game, board2, i, alternateColor)){
-                return -10000000;
-            }
-
-
-        }
+        board2.get(height).set(pos, color);
+        for(int i = 0; i<7; i++)
+            if(canWinInOneMove(game, board2, i, alternateColor)) return -10000000;
 
         return result;
     }
-    String getColor(Game game){
+
+
+    private String getColor(Game game){
 
         Optional<Player> any = game.getPlayers().stream()
                 .filter(p -> p.getPlayerId().equals(game.getCurrentPlayerId()))
@@ -240,17 +198,12 @@ public class FirstStrategy implements ConnectFourStrategy {
 
         int maxi = 0;
         //int currentBestMove = 0;
-        for(int i = 0;i<validMoves.size();i++){
-            int gh= costfunctionEasy(game, board,validMoves.get(i),getColor(game));
-            if ( gh> maxi){
-                finalMove = validMoves.get(i);
+        for (Integer validMove : validMoves) {
+            int gh = costFunctionEasy(game, board, validMove, getColor(game));
+            if (gh > maxi) {
+                finalMove = validMove;
                 maxi = gh;
             }
-        }
-        try {
-            TimeUnit.MILLISECONDS.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         return finalMove;
@@ -272,4 +225,5 @@ public class FirstStrategy implements ConnectFourStrategy {
     public void draw(Game game) {
 
     }
+
 }
